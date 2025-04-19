@@ -1,0 +1,44 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  Password String?
+  invoices Invoice[]
+}
+
+enum status {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+model Invoice {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  clientName    String
+  amount        Int
+  dueDate       DateTime
+  status        status
+  reminderSent  Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+  reminder  Reminder[]
+}
+model  Reminder{
+  id            Int      @id @default(autoincrement())
+  invoiceId    Int
+  reminderType  String
+  sentAt DateTime
+  invoice  Invoice @relation(fields: [invoiceId],references: [id])
+}
