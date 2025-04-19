@@ -4,7 +4,6 @@ import db from "./db"
 
 const app = express()
 
-// DATABASE_URL="mysql://root:Password1@@localhost:3306/BILLSYNC"
 
 app.listen(config.PORT, async () => {
     try {

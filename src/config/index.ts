@@ -1,11 +1,21 @@
-import "dotenv/config"
+import "dotenv/config";
 
-const config: { PORT?: string } = {}
-
-if (process.env.STAGE === "dev") {
-    config.PORT = process.env.PORT
-} else {
-    config.PORT = process.env.PORT
+interface Config {
+    PORT?: string;
+    DEV_DATABASE_URL?: string;
+    PROD_DATABASE_URL?: string;
+    PROD_DIRECT_URL?: string;
 }
 
-export default config
+const config: Config = {};
+
+if (process.env.STAGE === "dev") {
+    config.PORT = process.env.PORT || "3000";
+    config.DEV_DATABASE_URL = process.env.DEV_DATABASE_URL || "";
+} else {
+    config.PORT = process.env.PORT || "3000";
+    config.PROD_DATABASE_URL = process.env.PROD_DATABASE_URL || "";
+    config.PROD_DIRECT_URL = process.env.PROD_DIRECT_URL || "";
+}
+
+export default config;
