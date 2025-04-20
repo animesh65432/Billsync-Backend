@@ -3,9 +3,11 @@ import Invoices from "./Invoices"
 import check from "./check"
 import remider from "./reminders"
 import { Router } from "express"
+import { rateLimiter } from "../middlewares"
 
 const router = Router()
 
+router.use(rateLimiter(10, 2 * 60 * 1000))
 router.use("/check", check)
 router.use("/users", userrouter)
 router.use("/Invoices", Invoices)
