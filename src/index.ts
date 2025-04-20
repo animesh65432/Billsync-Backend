@@ -23,7 +23,12 @@ cron.schedule("0 0 * * *", () => {
 
 app.listen(config.PORT, async () => {
     try {
-        const users = await db.user.findMany()
+        const users = await db.user.create({
+            data: {
+                email: "test@gmail.com",
+                Password: "testpassword"
+            }
+        })
         console.log(users)
         app.listen(config.PORT, () => {
             console.log(`server start at ${config.PORT}`)
