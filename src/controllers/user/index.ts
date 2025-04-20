@@ -1,10 +1,11 @@
 import { Request, Response } from "express"
-import db from "../../db"
+import { db } from "../../db"
 import bcrypt from "bcrypt"
 import jsonwebtoekn from "jsonwebtoken"
 import config from "../../config"
+import { asyncerrorhandler } from "../../Utils"
 
-const createuser = async (req: Request, res: Response) => {
+const createuser = asyncerrorhandler(async (req: Request, res: Response) => {
     const { email, name, Password } = req.body
 
     if (!email || !name || !Password) {
@@ -40,19 +41,20 @@ const createuser = async (req: Request, res: Response) => {
         message: "sucessfully create user"
     })
     return
-}
+})
 
-const loginuser = async (req: Request, res: Response) => {
+const loginuser = asyncerrorhandler(async (req: Request, res: Response) => {
     const { email, Password } = req.body
     if (!email || !Password) {
         res.status(400).json({
             message: "Invaild credentials"
         })
+        return
     }
     const checkuser = await db.user.findUnique({
         where: {
             email
-        }
+        },
     })
 
     if (!checkuser) {
@@ -62,8 +64,7 @@ const loginuser = async (req: Request, res: Response) => {
         return
     }
 
-    const checkpassword = await bcrypt.compare(checkuser.Password as string, Password)
-
+    const checkpassword = await bcrypt.compare(Password, checkuser.Password as string)
     if (!checkpassword) {
         res.status(400).json({
             message: "password is not coorect"
@@ -73,13 +74,13 @@ const loginuser = async (req: Request, res: Response) => {
 
     const token = jsonwebtoekn.sign(email, config.JSONWEBTOEKN as string)
 
-    res.status(500).json({
+    res.status(200).json({
         token,
         message: "sucessfully login"
     })
     return
 
-}
+})
 
 
 export { createuser, loginuser }

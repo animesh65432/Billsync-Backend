@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, status } from "@prisma/client"
 
 const db = new PrismaClient()
 
-export default db
+export { status, db }

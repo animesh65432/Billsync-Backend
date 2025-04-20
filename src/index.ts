@@ -1,9 +1,12 @@
 import config from "./config"
 import cors from "cors"
 import express from "express"
-import db from "./db"
+import { db } from "./db"
 import router from "./routers"
 import { errorMiddleware } from "./middlewares"
+import cron from "node-cron"
+import rundaily from "./corn"
+
 
 const app = express()
 app.use(cors({
@@ -14,6 +17,9 @@ app.use(express.json())
 app.use("/api", router)
 app.use(errorMiddleware)
 
+cron.schedule("0 0 * * *", () => {
+    rundaily();
+});
 
 app.listen(config.PORT, async () => {
     try {

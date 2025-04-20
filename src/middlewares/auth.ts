@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express"
-import db from "../db"
+import { db } from "../db"
 import config from "../config"
-import { jwtpayload } from "../types"
 import JSONWEBTOEKN from "jsonwebtoken"
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
@@ -14,8 +13,7 @@ const auth = async (req: Request, res: Response, next: NextFunction) => {
         return
     }
 
-    const { email } = JSONWEBTOEKN.verify(token, config.JSONWEBTOEKN as string) as jwtpayload
-
+    const email = JSONWEBTOEKN.verify(token, config.JSONWEBTOEKN as string) as string
     if (!email) {
         res.status(400).json({
             message: "token is not vaild"
