@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express"
 import config from "../config"
 import { asyncfuncerrorpayload, GetmailOptionsTypes } from "../types"
+import { db } from "../db"
+import bcrypt from "bcrypt"
 const asyncerrorhandler = (func: asyncfuncerrorpayload) => {
   return (req: Request, res: Response, next: NextFunction) => {
     func(req, res, next).catch(err => next(err));
@@ -71,6 +73,33 @@ const tellToFounder = ({ username, userid, foundermail }: { username: string; us
   return mailOptions;
 };
 
+const createdummyuser = async () => {
+  try {
 
-export { asyncerrorhandler, GetmailOptions, tellToFounder }
+    const exstinguser = await db.user.findUnique({
+      where: {
+        email: "test@gmail.com"
+      }
+    })
+
+    if (exstinguser) {
+      return
+    }
+
+    const password = await bcrypt.hash("testpassword", 10)
+    await db.user.create({
+      data: {
+        email: "test@gmail.com",
+        password
+      }
+    })
+
+    console.log("create dummy user")
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+export { asyncerrorhandler, GetmailOptions, tellToFounder, createdummyuser }
 
