@@ -4,8 +4,8 @@ import config from "../config"
 import JSONWEBTOEKN from "jsonwebtoken"
 
 const auth = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.cookies.token
-
+    const token = req.headers["authorization"];
+    console.log(token)
     if (!token) {
         res.status(400).json({
             messsage: "token is required"
