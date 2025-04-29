@@ -7,7 +7,7 @@ import { rateLimiter } from "../middlewares"
 
 const router = Router()
 
-router.use(rateLimiter(10, 2 * 60 * 1000))
+router.use(rateLimiter(20, 2 * 60 * 1000))
 router.use("/check", check)
 router.use("/users", userrouter)
 router.use("/Invoices", Invoices)

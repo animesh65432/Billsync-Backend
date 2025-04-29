@@ -1,2 +1,3 @@
 import nodemailer from "./nodemailer";
-export { nodemailer }
+import googleclient from "./google";
+export { nodemailer, googleclient }

@@ -4,6 +4,8 @@ import { db, status } from "../../db"
 
 const GetInvoices = asyncerrorhandler(async (req: Request, res: Response) => {
     const userId = Number(req.user?.id)
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
 
     const clients = await db.invoice.findMany({
         where: {
@@ -15,13 +17,14 @@ const GetInvoices = asyncerrorhandler(async (req: Request, res: Response) => {
             amount: true,
             status: true,
             dueDate: true,
-            reminderSent: true
-        }
+            reminderSent: true,
+            Mail: true
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize
     })
 
-    res.status(200).json({
-        clients
-    })
+    res.status(200).json(clients)
     return
 })
 
@@ -74,14 +77,15 @@ const GetInvoice = asyncerrorhandler(async (req: Request, res: Response) => {
             clientName: true,
             amount: true,
             status: true,
-            reminder: true,
-            dueDate: true
+            reminderSent: true,
+            dueDate: true,
+            Mail: true
         }
     })
 
-    res.status(200).json({
+    res.status(200).json(
         client
-    })
+    )
     return
 })
 
@@ -91,7 +95,7 @@ const UpdateInvoice = asyncerrorhandler(async (req: Request, res: Response) => {
         amount,
         status,
         reminder,
-        dueDate } = req.body
+        dueDate, Mail } = req.body
     const { id } = req.query
     const invoiceId = Number(id)
 
@@ -101,7 +105,7 @@ const UpdateInvoice = asyncerrorhandler(async (req: Request, res: Response) => {
         })
         return
     }
-    if (!clientName || !amount || !dueDate || !status || !reminder) {
+    if (!clientName || !amount || !dueDate || !Mail) {
         res.status(400).json({
             message: "it's required"
         })
@@ -115,8 +119,7 @@ const UpdateInvoice = asyncerrorhandler(async (req: Request, res: Response) => {
             clientName,
             amount,
             dueDate,
-            status,
-            reminder
+            Mail
         }
     })
 
@@ -177,4 +180,5 @@ const Mark_as_paid = asyncerrorhandler(async (req: Request, res: Response) => {
     return
 })
 
-export { GetInvoice, GetInvoices, CreateInvoice, UpdateInvoice, DeleteInvoice, Mark_as_paid }
+
+export { GetInvoice, GetInvoices, CreateInvoice, UpdateInvoice, DeleteInvoice, Mark_as_paid, }

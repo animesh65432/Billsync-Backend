@@ -4,16 +4,15 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("PROD_DATABASE_URL")
-  directUrl  = env("PROD_DIRECT_URL")
+  provider = "mysql"
+  url      = env("DEV_DATABASE_URL")
+  // directUrl  = env("PROD_DIRECT_URL")
 }
-
 model User {
   id       Int     @id @default(autoincrement())
   email    String  @unique
   name     String?
-  Password String?
+  password String?
   invoices Invoice[]
 }
 
@@ -34,11 +33,12 @@ model Invoice {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id])
-  reminder  Reminder[]
+  reminders     Reminder[] @relation("InvoiceReminder")  
 }
-model  Reminder{
+
+model Reminder {
   id            Int      @id @default(autoincrement())
-  invoiceId    Int
-  sentAt DateTime 
-  invoice  Invoice @relation(fields: [invoiceId],references: [id])
+  invoiceId     Int
+  sentAt        DateTime 
+  invoice       Invoice  @relation("InvoiceReminder", fields: [invoiceId], references: [id], onDelete: Cascade)  
 }

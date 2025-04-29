@@ -1,6 +1,7 @@
 import { db } from "../db";
-import { GetmailOptions } from "../Utils";
+import { GetmailOptions, tellToFounder } from "../Utils";
 import { nodemailer } from "../services";
+import config from "../config";
 
 const rundaily = async () => {
     try {
@@ -29,6 +30,13 @@ const rundaily = async () => {
                 })
             );
 
+            const founderEmail = invoice.user.email === "test@gmail.com" ? config.NODEMAILER_EMAIL : invoice.user.email
+
+            await nodemailer.sendMail(tellToFounder({
+                userid: invoice.userId,
+                username: invoice.clientName,
+                foundermail: founderEmail!
+            }))
 
             await db.invoice.update({
                 where: { id: invoice.id },
